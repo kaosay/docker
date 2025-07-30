@@ -1,0 +1,26 @@
+
+FROM ubuntu:latest
+
+ENV USER=root
+ENV PASSWD=tom123
+
+#COPY ./init.sh /tmp/init.sh
+#COPY ./tips.sh /jingsuai
+COPY ./init.sh /tmp
+COPY ./tips.sh /jingsuai/tips.sh
+COPY ./sources.list /etc/apt/sources.list
+
+RUN chmod +x /tmp/init.sh && \
+	apt-get update && \
+	apt-get install -y openssh-server && \
+	mkdir /var/run/sshd && \
+	sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+	sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config 
+
+EXPOSE 22
+
+#CMD ["/usr/sbin/sshd", "-D"]
+##CMD ["/usr/sbin/sshd -D"]
+##CMD ["/tmp/init.sh", "&&", "/usr/sbin/sshd", "-D", "&&", "echo 'this is end of CMD!'"]
+CMD /tmp/init.sh && \
+	/usr/sbin/sshd -D
