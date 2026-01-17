@@ -1,0 +1,29 @@
+# 使用指定版本的 Alpine 镜像
+FROM alpine:3.21
+
+ENV TZ=America/Sao_Paulo
+
+# Create a rootless account
+RUN sed -i 's|https://dl-cdn.alpinelinux.org/alpine|https://mirrors.aliyun.com/alpine|g' /etc/apk/repositories \
+&& apk add --no-cache tzdata \
+&& addgroup -g 1000 test-group \
+&& adduser -D -u 1000 -G test-group test-user
+
+# 切换到非特权用户
+USER test-user
+
+# 设置工作目录
+WORKDIR /test-server/
+
+# 拷贝文件
+COPY --chown=test-user:test-group ./$APP/$APP .
+
+# 创建需要的目录，并添加用户组和用户，同时设置适当的权限
+RUN mkdir -p /test-server/other/yaml /test-server/other/json /test-server/other/log /test-server/conf /test-server/log
+
+# 暴露端口
+EXPOSE ${env.PORT_HTTP}
+EXPOSE ${env.PORT_RPC}
+
+# 设置默认启动命令
+CMD ["/test-server/$APP"]
