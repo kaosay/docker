@@ -1,0 +1,19 @@
+services:
+  mysql8:
+    image: mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: '123'
+      MYSQL_USER: 'user_jh' 
+      MYSQL_PASSWORD: '456'
+    volumes:
+      - ./data:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/my.cnf
+    networks:
+      - dice-net
+networks:
+  dice-net:
+    external: true
