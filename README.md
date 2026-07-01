@@ -9,3 +9,7 @@ apt search docker| grep docker
 apt install docker.io
 apt install docker-compose-v2
 ```
+## add user to docker group
+```
+sudo usermod -aG docker ecs-user
+```
